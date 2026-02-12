@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Save Food Project | Pro Platform</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8F8F8;
+            color: #111;
+            line-height: 1.6;
+        }
+
+        h1, h2, h3, .heading-font {
+            font-family: 'Oswald', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: -0.5px;
+        }
+
+        .theme-bg { background-color: #E52321; }
+        .theme-text { color: #E52321; }
+        .theme-border { border-color: #E52321; }
+        [x-cloak] { display: none !important; }
+
+        .game-box {
+            transition: all 0.3s ease;
+        }
+
+        .game-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Save Food Insights component styles */
+        .insights-component .container {
+            text-align: center;
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(46, 125, 50, 0.15);
+            max-width: 800px;
+            width: 100%;
+            transition: transform 0.3s ease;
+            margin: 0 auto;
+        }
+
+        .insights-component .container:hover {
+            transform: translateY(-5px);
+        }
+
+        .insights-component h1 {
+            color: #2e7d32;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .insights-component .subtitle {
+            color: #555;
+            font-size: 1.05rem;
+            margin-bottom: 18px;
+        }
+
+        .insights-component .language-switch {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .insights-component .lang-btn {
+            padding: 8px 16px;
+            border: 2px solid #2e7d32;
+            background: white;
+            color: #2e7d32;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .insights-component .lang-btn.active {
+            background: #2e7d32;
+            color: white;
+        }
+
+        .insights-component .button-group {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+        }
+
+        .insights-component .btn {
+            padding: 10px 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            border: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .insights-component .btn:hover {
+            transform: scale(1.05);
+        }
+
+        .insights-component .btn-primary {
+            background: linear-gradient(135deg, #2e7d32 0%, #4caf50 100%);
+            color: #fff;
+        }
+
+        .insights-component .btn-random {
+            background: linear-gradient(135deg, #ff9800 0%, #ffb74d 100%);
+            color: #fff;
+        }
+
+        .insights-component .btn-secondary {
+            background: #f1f8e9;
+            color: #2e7d32;
+            border: 2px solid #2e7d32;
+        }
+
+        .insights-component #insightBox {
+            margin: 20px auto;
+            padding: 20px;
+            background: #f1f8e9;
+            border-radius: 12px;
+            border-left: 5px solid #2e7d32;
+            font-size: 1.05rem;
+            color: #333;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.4s ease;
+            max-width: 700px;
+            line-height: 1.8;
+        }
+
+        .insights-component .fade {
+            opacity: 0;
+            transform: translateY(8px);
+        }
+
+        .insights-component .counter {
+            margin: 10px 0;
+            font-size: 0.9rem;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .insights-component .statistics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 14px;
+            margin-top: 22px;
+        }
+
+        .insights-component .stat-card {
+            background: white;
+            padding: 14px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+            border-top: 4px solid #4caf50;
+        }
+
+        .insights-component .stat-card h3 {
+            color: #2e7d32;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+            text-transform: none;
+        }
+
+        .insights-component .stat-card p {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1b5e20;
+        }
+
+        .insights-component .stat-card .unit {
+            font-size: 0.7rem;
+            margin-left: 5px;
+        }
+
+        .insights-component .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+
+        .insights-component .progress {
+            height: 100%;
+            background: linear-gradient(90deg, #4caf50, #8bc34a);
+            width: 0%;
+            transition: width 1s ease;
+        }
+
+        .insights-component .highlight {
+            color: #2e7d32;
+            font-weight: 700;
+        }
+
+        @media (max-width: 768px) {
+            .insights-component h1 {
+                font-size: 1.4rem;
+            }
+
+            .insights-component .button-group {
+                flex-direction: column;
+            }
+
+            .insights-component .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .insights-component .language-switch {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body x-data="appData()" class="overflow-x-hidden">
+
+    <audio id="ping" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3"></audio>
+    <audio id="success" src="https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3"></audio>
+
+    <nav class="fixed w-full z-50 px-6 py-5 flex justify-between items-center bg-white border-b border-gray-100 shadow-sm">
+        <div class="text-3xl font-bold heading-font theme-text">SAVE THE FOOD</div>
+        <div class="hidden md:flex gap-8 font-bold text-sm tracking-widest uppercase items-center text-black">
+            <a href="#intro" class="hover:theme-text transition">Introduction</a>
+            <a href="#planning" class="hover:theme-text transition">Planning</a>
+            <a href="#games" class="hover:theme-text transition">Minigames</a>
+            <a href="#storage" class="hover:theme-text transition">Storage</a>
+            <a href="#contact" class="bg-black text-white px-6 py-2 hover:bg-red-600 transition">Contact</a>
+        </div>
+    </nav>
+
+    <header class="relative w-full h-[80vh] flex items-center justify-center bg-black overflow-hidden">
+        <div class="absolute inset-0 opacity-50">
+            <img src="https://images.pexels.com/photos/1435904/pexels-photo-1435904.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" class="w-full h-full object-cover">
+        </div>
+        <div class="relative z-10 text-center text-white px-4">
+            <h1 class="text-7xl md:text-9xl font-bold leading-tight mb-6 hero-anim uppercase">Waste Less<br>Live More.</h1>
+            <p class="text-xl tracking-[0.5em] mb-10 hero-anim">A SAVE FOOD PROJECT INITIATIVE</p>
+        </div>
+    </header>
+
+    <section id="intro" class="py-24 bg-white px-6">
+        <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <div class="space-y-6">
+                <h2 class="text-5xl heading-font">🌱 Welcome to the Save Food Project</h2>
+                <p class="text-lg text-gray-600 leading-relaxed">
+                    Food is one of the most valuable resources we have, yet every day, tons of edible food is wasted. Our mission is simple: <strong>to raise awareness</strong>, encourage small but impactful actions, and inspire communities to reduce food waste.
+                </p>
+                <div class="grid grid-cols-1 gap-4 font-bold uppercase text-sm tracking-widest">
+                    <div class="flex items-center gap-3">✅ Mindful Consumption</div>
+                    <div class="flex items-center gap-3">✅ Smart Storage & Reuse</div>
+                    <div class="flex items-center gap-3">✅ Supporting Local Initiatives</div>
+                </div>
+            </div>
+            <div class="aspect-video bg-black rounded-3xl overflow-hidden shadow-2xl">
+                <iframe class="w-full h-full" src="https://www.youtube.com/embed/6iqXH9RPK1w" title="Food Waste Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </div>
+    </section>
+
+        <!-- Save Food Insights component -->
+        <section id="insights-component" class="py-16 bg-[#f7fff7] px-6">
+            <div class="insights-component">
+                <div class="container">
+                    <div class="header">
+                        <h1>
+                            <span>🌍</span>
+                            Save Food Insights
+                            <span>🍽️</span>
+                        </h1>
+                        <p class="subtitle">Discover the truth about food waste and take action today</p>
+
+                        <div class="language-switch">
+                            <button class="lang-btn active" id="langVI">🇻🇳 Tiếng Việt</button>
+                            <button class="lang-btn" id="langEN">🇺🇸 English</button>
+                        </div>
+                    </div>
+
+                    <div class="button-group">
+                        <button class="btn btn-primary" id="nextInsightBtn">
+                            <span class="icon">📊</span>
+                            Thông tin tiếp theo
+                        </button>
+                        <button class="btn btn-random" id="randomInsightBtn">
+                            <span class="icon">🎲</span>
+                            Ngẫu nhiên
+                        </button>
+                        <button class="btn btn-secondary" id="holdBtn" onmousedown="startHold()" ontouchstart="startHold()" onmouseup="stopHold()" ontouchend="stopHold()">
+                            <span class="icon">⏳</span>
+                            Nhấn & giữ (3s)
+                        </button>
+                    </div>
+
+                    <div id="insightBox">Nhấn nút để khám phá thông tin về lãng phí thực phẩm...</div>
+
+                    <div class="progress-bar"><div class="progress" id="progress"></div></div>
+                    <div class="counter"><span id="currentIndex">0</span>/<span id="totalInsights">0</span> thông tin</div>
+
+                    <div class="statistics">
+                        <div class="stat-card">
+                            <h3>Thực phẩm lãng phí mỗi năm</h3>
+                            <p>931 <span class="unit">triệu tấn</span></p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Khí CO₂ từ lãng phí thực phẩm</h3>
+                            <p>3.3 <span class="unit">tỷ tấn/năm</span></p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Thiệt hại kinh tế</h3>
+                            <p>1 <span class="unit">nghìn tỷ USD</span></p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Người có thể được nuôi</h3>
+                            <p>2 <span class="unit">tỷ người</span></p>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 20px; padding: 16px; background: #f8fdf9; border-radius: 10px;">
+                        <h3 style="color: #2e7d32; margin-bottom: 10px; text-transform: none;">💡 Food Saving Tips</h3>
+                        <p style="color: #555; line-height: 1.6; text-align: left; font-size: 0.95rem;">
+                            <strong>1. Plan Your Meals</strong> - Buy only what you need<br>
+                            <strong>2. Store Properly</strong> - Use smart refrigeration techniques<br>
+                            <strong>3. Get Creative</strong> - Transform leftovers into delicious dishes<br>
+                            <strong>4. Share When Extra</strong> - Donate to neighbors or charity
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    <section id="planning" class="py-24 px-6 bg-[#F4F4F4]">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-5xl heading-font mb-12 text-center uppercase">The <span class="theme-text">Guestimator</span> & Bill</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <div class="space-y-8">
+                    <div class="bg-white p-8 shadow-sm">
+                        <label class="block text-xs font-bold uppercase mb-6 text-gray-400">Number of Guests</label>
+                        <div class="flex items-center gap-8">
+                            <button @click="guests > 1 ? (guests--, playSfx()) : null" class="w-12 h-12 border border-black text-2xl">-</button>
+                            <span class="text-6xl heading-font" x-text="guests"></span>
+                            <button @click="guests < 100 ? (guests++, playSfx()) : null" class="w-12 h-12 border border-black text-2xl">+</button>
+                        </div>
+                    </div>
+                    <div class="bg-white p-8 shadow-sm">
+                        <label class="block text-xs font-bold uppercase mb-6 text-gray-400">Appetite</label>
+                        <div class="grid grid-cols-3 gap-4">
+                            <button @click="appetite = 'small'" :class="appetite === 'small' ? 'bg-black text-white' : 'bg-gray-100'" class="py-3 font-bold uppercase text-xs">Small</button>
+                            <button @click="appetite = 'avg'" :class="appetite === 'avg' ? 'bg-black text-white' : 'bg-gray-100'" class="py-3 font-bold uppercase text-xs">Avg</button>
+                            <button @click="appetite = 'big'" :class="appetite === 'big' ? 'bg-black text-white' : 'bg-gray-100'" class="py-3 font-bold uppercase text-xs">Big</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-10 shadow-2xl border-t-8 theme-border">
+                    <h3 class="text-2xl font-bold mb-6 border-b-2 border-dashed pb-4 uppercase">Party Invoice</h3>
+                    <div class="space-y-4">
+                        <div class="flex justify-between font-medium">
+                            <span>Protein (<span x-text="calculateKg(0.25)"></span>kg)</span>
+                            <span x-text="'$' + (calculateKg(0.25)*15).toFixed(2)"></span>
+                        </div>
+                        <div class="flex justify-between font-medium">
+                            <span>Vegetables (<span x-text="calculateKg(0.2)"></span>kg)</span>
+                            <span x-text="'$' + (calculateKg(0.2)*5).toFixed(2)"></span>
+                        </div>
+                        <div class="flex justify-between font-medium">
+                            <span>Rice/Grains (<span x-text="calculateKg(0.15)"></span>kg)</span>
+                            <span x-text="'$' + (calculateKg(0.15)*3).toFixed(2)"></span>
+                        </div>
+                        <div class="pt-6 border-t-2 border-black flex justify-between text-2xl font-bold theme-text">
+                            <span>TOTAL BILL</span>
+                            <span x-text="'$' + (calculateKg(0.25)*15 + calculateKg(0.2)*5 + calculateKg(0.15)*3).toFixed(2)"></span>
+                        </div>
+                        <p class="text-[10px] text-gray-400 italic mt-4 uppercase">Bill generated for <span x-text="guests"></span> guests. Prices are market estimates.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="games" class="py-24 bg-white px-6">
+        <h2 class="text-5xl heading-font mb-16 text-center uppercase">Save Food Game Hub</h2>
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+            
+            <div class="bg-gray-900 text-white p-8 rounded-3xl game-box flex flex-col justify-between">
+                <div>
+                    <h3 class="text-xl font-bold mb-4 uppercase">🎮 Game 1: Save the Rice</h3>
+                    <div class="h-48 border border-gray-700 rounded-xl relative overflow-hidden bg-gray-800">
+                        <button x-show="!catchActive" @click="startCatch()" class="absolute inset-0 m-auto h-12 bg-red-600 px-6 font-bold uppercase text-xs">Start Catching</button>
+                        <div x-show="catchActive" @click="hitRice()" class="absolute text-4xl cursor-pointer" :style="`top: ${ricePos.y}%; left: ${ricePos.x}%;`" x-text="'🍚'"></div>
+                    </div>
+                </div>
+                <div class="mt-4 font-bold text-center">Score: <span x-text="catchScore"></span></div>
+            </div>
+
+            <div class="bg-gray-100 p-8 rounded-3xl game-box" x-data="quizGame()">
+                <h3 class="text-xl font-bold mb-4 uppercase">🥇 Game 2: Food Quiz</h3>
+                <div x-show="!finished">
+                    <p class="text-sm font-bold mb-4 italic" x-text="questions[current].q"></p>
+                    <div class="space-y-2">
+                        <template x-for="(opt, i) in questions[current].a">
+                            <button @click="answer(i)" class="w-full text-left p-3 bg-white text-xs font-bold hover:bg-red-500 hover:text-white transition" x-text="opt"></button>
+                        </template>
+                    </div>
+                </div>
+                <div x-show="finished" class="text-center py-10">
+                    <p class="font-bold">Score: <span x-text="score"></span>/3</p>
+                    <button @click="reset()" class="mt-4 text-[10px] underline uppercase font-bold">Restart</button>
+                </div>
+            </div>
+
+            <div class="bg-[#111] text-white p-8 rounded-3xl game-box" x-data="sortGame()">
+                <h3 class="text-xl font-bold mb-4 uppercase text-blue-400">🥈 Game 3: Storage Sort</h3>
+                <div x-show="item" class="text-center mb-6">
+                    <div class="text-5xl mb-2" x-text="item.icon"></div>
+                    <div class="text-[10px] font-bold uppercase tracking-widest" x-text="item.name"></div>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <button @click="check('fridge')" class="py-2 border border-blue-500 text-[10px] font-bold uppercase hover:bg-blue-500">Fridge</button>
+                    <button @click="check('pantry')" class="py-2 border border-yellow-500 text-[10px] font-bold uppercase hover:bg-yellow-500">Pantry</button>
+                </div>
+                <div class="mt-4 text-[10px] text-center opacity-50 uppercase">Correct: <span x-text="score"></span></div>
+            </div>
+
+        </div>
+    </section>
+
+    <section id="storage" class="py-24 bg-gray-50 px-6">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12">
+            <div class="group">
+                <div class="h-72 overflow-hidden mb-6 rounded-2xl">
+                    <img src="https://images.pexels.com/photos/4110251/pexels-photo-4110251.jpeg?auto=compress&cs=tinysrgb&w=800" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
+                </div>
+                <h3 class="text-2xl font-bold uppercase">Uncooked Rice</h3>
+                <p class="text-gray-500 text-sm">Store in an airtight container in a dry place to prevent pests.</p>
+            </div>
+            <div class="group">
+                <div class="h-72 overflow-hidden mb-6 rounded-2xl">
+                    <img src="https://images.pexels.com/photos/1751147/pexels-photo-1751147.jpeg?auto=compress&cs=tinysrgb&w=800" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
+                </div>
+                <h3 class="text-2xl font-bold uppercase">Leafy Greens</h3>
+                <p class="text-gray-500 text-sm">Wrap in paper towels to absorb moisture in the fridge.</p>
+            </div>
+            <div class="group">
+                <div class="h-72 overflow-hidden mb-6 rounded-2xl">
+                    <img src="https://images.pexels.com/photos/1132047/pexels-photo-1132047.jpeg?auto=compress&cs=tinysrgb&w=800" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
+                </div>
+                <h3 class="text-2xl font-bold uppercase">Fresh Fruit</h3>
+                <p class="text-gray-500 text-sm">Keep berries dry and only wash them right before eating.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer id="contact" class="bg-black text-white pt-24 pb-12 px-6">
+        <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-20 border-b border-gray-800 pb-20">
+            <div>
+                <h2 class="text-5xl heading-font mb-6">✨ Connect — Save Food Initiative</h2>
+                <p class="text-gray-400 mb-6">Follow our movement, get tips, challenges and community stories that help reduce food waste. Join the conversation — every follower helps spread the vibe.</p>
+
+                <div class="flex items-center gap-4">
+                    <a href="https://www.instagram.com/savefoodinitiative" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 bg-white/5 hover:bg-white/10 px-4 py-3 rounded-lg">
+                        <!-- Instagram SVG -->
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <rect x="2" y="2" width="20" height="20" rx="5" stroke="white" stroke-opacity="0.9" stroke-width="1.2" />
+                            <path d="M7.5 7.5h9v9h-9z" stroke="white" stroke-opacity="0.9" stroke-width="1" fill="none"/>
+                            <circle cx="12" cy="12" r="2.5" stroke="white" stroke-opacity="0.9" stroke-width="1" fill="none"/>
+                        </svg>
+                        <div class="text-sm">
+                            <div class="font-bold">Instagram</div>
+                            <div class="text-xs text-gray-300">@SaveFoodInitiative</div>
+                        </div>
+                    </a>
+
+                    <a href="https://www.facebook.com/savefoodinitiative" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 bg-white/5 hover:bg-white/10 px-4 py-3 rounded-lg">
+                        <!-- Facebook SVG -->
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <path d="M14 8h2V5h-2c-1.1 0-2 .9-2 2v1H10v3h2v7h3v-7h2.3l.7-3H15V7c0-.3.2-.5.5-.5z" fill="white" fill-opacity="0.95"/>
+                        </svg>
+                        <div class="text-sm">
+                            <div class="font-bold">Facebook</div>
+                            <div class="text-xs text-gray-300">/SaveFoodInitiative</div>
+                        </div>
+                    </a>
+
+                    <a href="https://www.tiktok.com/@savefoodinitiative" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 bg-white/5 hover:bg-white/10 px-4 py-3 rounded-lg">
+                        <!-- TikTok SVG -->
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <path d="M9 8v8a3 3 0 0 0 3 3 3 3 0 0 0 3-3V8h2a5 5 0 0 1-5 5V19a5 5 0 0 1-5-5V8h-3V5h3z" fill="white" fill-opacity="0.95"/>
+                        </svg>
+                        <div class="text-sm">
+                            <div class="font-bold">TikTok</div>
+                            <div class="text-xs text-gray-300">@SaveFoodInitiative</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <div class="flex flex-col justify-center">
+                <p class="text-gray-400 italic">We craft practical tips, community challenges, and feel-good stories to help households, cafes and markets waste less. Want to collaborate or feature your project? Message us directly on any of the platforms above.</p>
+            </div>
+        </div>
+
+        <div class="pt-10 text-center">
+            <div class="text-[12px] tracking-[0.4em] uppercase font-bold text-gray-500">Follow Save Food Initiative</div>
+            <div class="mt-4 text-[12px] text-gray-400">© 2026 Save Food Initiative — Act local, impact global</div>
+        </div>
+    </footer>
+
+    <script>
+        function appData() {
+            return {
+                guests: 4,
+                appetite: 'avg',
+                catchActive: false,
+                catchScore: 0,
+                ricePos: { x: 50, y: 50 },
+
+                playSfx() {
+                    const audio = document.getElementById('ping');
+                    if (audio) audio.play().catch(err => console.log('Audio play failed:', err));
+                },
+
+                playSuccess() {
+                    const audio = document.getElementById('success');
+                    if (audio) audio.play().catch(err => console.log('Audio play failed:', err));
+                },
+
+                calculateKg(base) {
+                    const multiplier = this.appetite === 'small' ? 0.8 : (this.appetite === 'big' ? 1.4 : 1);
+                    return (this.guests * base * multiplier).toFixed(2);
+                },
+
+                startCatch() {
+                    this.catchActive = true;
+                    this.catchScore = 0;
+                    this.moveRice();
+                    setTimeout(() => {
+                        this.catchActive = false;
+                    }, 15000);
+                },
+
+                moveRice() {
+                    if (!this.catchActive) return;
+                    this.ricePos.x = Math.random() * 80 + 10;
+                    this.ricePos.y = Math.random() * 80 + 10;
+                    setTimeout(() => this.moveRice(), 800);
+                },
+
+                hitRice() {
+                    this.catchScore++;
+                    this.playSfx();
+                    this.ricePos.x = -100;
+                }
+            };
+        }
+
+        function quizGame() {
+            return {
+                score: 0,
+                current: 0,
+                finished: false,
+                questions: [
+                    { q: "What is the best place to store rice?", a: ["Fridge", "Airtight Pantry", "Countertop"], c: 1 },
+                    { q: "When should you wash berries?", a: ["Immediately", "Before eating", "Never"], c: 1 },
+                    { q: "What do leafy greens need in storage?", a: ["Paper towel", "Direct sun", "Nothing"], c: 0 }
+                ],
+
+                answer(i) {
+                    if (i === this.questions[this.current].c) {
+                        this.score++;
+                        document.getElementById('success').play().catch(err => console.log('Audio error'));
+                    } else {
+                        document.getElementById('ping').play().catch(err => console.log('Audio error'));
+                    }
+                    if (this.current < 2) {
+                        this.current++;
+                    } else {
+                        this.finished = true;
+                    }
+                },
+
+                reset() {
+                    this.current = 0;
+                    this.score = 0;
+                    this.finished = false;
+                }
+            };
+        }
+
+        function sortGame() {
+            return {
+                score: 0,
+                index: 0,
+                items: [
+                    { name: 'Milk', icon: '🥛', t: 'fridge' },
+                    { name: 'Rice', icon: '🌾', t: 'pantry' },
+                    { name: 'Beef', icon: '🥩', t: 'fridge' },
+                    { name: 'Honey', icon: '🍯', t: 'pantry' }
+                ],
+
+                get item() {
+                    return this.items[this.index];
+                },
+
+                check(p) {
+                    if (!this.item) return;
+                    if (p === this.item.t) {
+                        this.score++;
+                        document.getElementById('success').play().catch(err => console.log('Audio error'));
+                    } else {
+                        document.getElementById('ping').play().catch(err => console.log('Audio error'));
+                    }
+                    this.index++;
+                }
+            };
+        }
+
+        // Initialize animations
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                gsap.from(".hero-anim", {
+                    y: 100,
+                    opacity: 0,
+                    duration: 1.5,
+                    stagger: 0.3,
+                    ease: "power4.out"
+                });
+            });
+        } else {
+            gsap.from(".hero-anim", {
+                y: 100,
+                opacity: 0,
+                duration: 1.5,
+                stagger: 0.3,
+                ease: "power4.out"
+            });
+        }
+    </script>
+        <script>
+        // Save Food Insights component initialization
+        const insightsData = {
+            vi: [
+                "🌍 Hàng năm, <span class='highlight'>931 triệu tấn</span> thực phẩm bị lãng phí trên toàn cầu.",
+                "💨 Lãng phí thực phẩm tạo ra <span class='highlight'>3.3 tỷ tấn CO₂</span> mỗi năm, góp phần lớn vào biến đổi khí hậu.",
+                "💰 Thiệt hại kinh tế toàn cầu từ lãng phí thực phẩm lên tới <span class='highlight'>1 nghìn tỷ USD</span> mỗi năm.",
+                "🏠 Khoảng <span class='highlight'>70%</span> thực phẩm bị lãng phí đến từ các hộ gia đình.",
+                "🤖 Công nghệ AI và IoT có thể giúp giảm tới <span class='highlight'>40%</span> lãng phí trong chuỗi cung ứng thực phẩm.",
+                "🚰 Lượng nước dùng để sản xuất thực phẩm bị lãng phí mỗi năm đủ cho nhu cầu của <span class='highlight'>9 tỷ người</span>.",
+                "🌾 Ở các nước đang phát triển, <span class='highlight'>40%</span> thất thoát xảy ra ở giai đoạn sau thu hoạch và chế biến.",
+                "🌡️ Nếu lãng phí thực phẩm là một quốc gia, nó sẽ là nước phát thải khí nhà kính <span class='highlight'>lớn thứ ba</span> thế giới.",
+                "👨‍👩‍👧‍👦 Số thực phẩm bị lãng phí đủ để nuôi <span class='highlight'>2 tỷ người</span> - gấp đôi số người thiếu ăn toàn cầu.",
+                "🔄 Tái chế thực phẩm thừa thành phân compost có thể giảm <span class='highlight'>50%</span> lượng rác thải ra môi trường.",
+                "📱 Ứng dụng chống lãng phí thực phẩm đã giúp cứu <span class='highlight'>200 triệu bữa ăn</span> khỏi bị vứt bỏ.",
+                "🛒 Người tiêu dùng có thể giảm <span class='highlight'>25%</span> lãng phí thực phẩm chỉ bằng cách lập danh sách mua sắm.",
+                "🍎 Trái cây và rau củ chiếm <span class='highlight'>45%</span> tổng lượng thực phẩm bị lãng phí.",
+                "🏪 Siêu thị lãng phí <span class='highlight'>10%</span> tổng sản phẩm thực phẩm do hết hạn sử dụng hoặc hư hỏng.",
+                "🎯 Mục tiêu phát triển bền vững của LHQ kêu gọi giảm <span class='highlight'>50%</span> lãng phí thực phẩm vào năm 2030."
+            ],
+            en: [
+                "🌍 <span class='highlight'>931 million tons</span> of food is wasted globally each year.",
+                "💨 Food waste generates <span class='highlight'>3.3 billion tons of CO₂</span> annually, significantly contributing to climate change.",
+                "💰 The global economic loss from food waste amounts to <span class='highlight'>1 trillion USD</span> every year.",
+                "🏠 Approximately <span class='highlight'>70%</span> of food waste comes from households.",
+                "🤖 AI and IoT technologies can reduce up to <span class='highlight'>40%</span> of waste in the food supply chain.",
+                "🚰 The water used to produce wasted food each year could meet the needs of <span class='highlight'>9 billion people</span>.",
+                "🌾 In developing countries, <span class='highlight'>40%</span> of losses occur at post-harvest and processing stages.",
+                "🌡️ If food waste were a country, it would be the <span class='highlight'>third-largest</span> emitter of greenhouse gases.",
+                "👨‍👩‍👧‍👦 The amount of wasted food could feed <span class='highlight'>2 billion people</span> - twice the number of undernourished people globally.",
+                "🔄 Recycling food waste into compost can reduce landfill waste by <span class='highlight'>50%</span>.",
+                "📱 Food-saving apps have rescued <span class='highlight'>200 million meals</span> from being discarded.",
+                "🛒 Consumers can reduce food waste by <span class='highlight'>25%</span> simply by using shopping lists.",
+                "🍎 Fruits and vegetables account for <span class='highlight'>45%</span> of total food waste.",
+                "🏪 Supermarkets waste <span class='highlight'>10%</span> of total food products due to expiration or damage.",
+                "🎯 The UN Sustainable Development Goals call for a <span class='highlight'>50%</span> reduction in food waste by 2030."
+            ]
+        };
+
+        let currentLanguage = 'vi';
+        let currentIndex = 0;
+        let holdTimer = null;
+        let autoPlayTimer = null;
+
+        const box = document.getElementById("insightBox");
+        const currentIndexSpan = document.getElementById("currentIndex");
+        const totalInsightsSpan = document.getElementById("totalInsights");
+        const progressBar = document.getElementById("progress");
+
+        function initInsights() {
+            updateTotalInsights();
+            updateCounter();
+            updateProgressBar();
+        }
+
+        function updateTotalInsights() {
+            totalInsightsSpan.textContent = insightsData[currentLanguage].length;
+        }
+
+        function updateCounter() {
+            currentIndexSpan.textContent = currentIndex + 1;
+        }
+
+        function updateProgressBar() {
+            const total = insightsData[currentLanguage].length;
+            const percentage = ((currentIndex + 1) / total) * 100;
+            progressBar.style.width = `${percentage}%`;
+        }
+
+        function showInsight(index) {
+            box.classList.add('fade');
+            setTimeout(() => {
+                const insights = insightsData[currentLanguage];
+                currentIndex = index;
+                box.innerHTML = insights[currentIndex];
+                box.classList.remove('fade');
+                updateCounter();
+                updateProgressBar();
+            }, 300);
+        }
+
+        function nextInsight() {
+            const insights = insightsData[currentLanguage];
+            currentIndex = (currentIndex + 1) % insights.length;
+            showInsight(currentIndex);
+        }
+
+        function randomInsight() {
+            const insights = insightsData[currentLanguage];
+            const randomIndex = Math.floor(Math.random() * insights.length);
+            showInsight(randomIndex);
+        }
+
+        function startHold() {
+            holdTimer = setTimeout(() => {
+                randomInsight();
+            }, 3000);
+        }
+
+        function stopHold() {
+            if (holdTimer) {
+                clearTimeout(holdTimer);
+                holdTimer = null;
+            }
+        }
+
+        function switchLanguage(lang) {
+            currentLanguage = lang;
+            document.querySelectorAll('#insights-component .lang-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            if (lang === 'vi') {
+                document.getElementById('langVI').classList.add('active');
+                document.getElementById('nextInsightBtn').innerHTML = '<span class="icon">📊</span> Thông tin tiếp theo';
+                document.getElementById('randomInsightBtn').innerHTML = '<span class="icon">🎲</span> Ngẫu nhiên';
+                document.getElementById('holdBtn').innerHTML = '<span class="icon">⏳</span> Nhấn & giữ (3s)';
+                box.textContent = 'Nhấn nút để khám phá thông tin về lãng phí thực phẩm...';
+            } else {
+                document.getElementById('langEN').classList.add('active');
+                document.getElementById('nextInsightBtn').innerHTML = '<span class="icon">📊</span> Next Insight';
+                document.getElementById('randomInsightBtn').innerHTML = '<span class="icon">🎲</span> Random';
+                document.getElementById('holdBtn').innerHTML = '<span class="icon">⏳</span> Press & Hold (3s)';
+                box.textContent = 'Click button to explore food waste insights...';
+            }
+
+            currentIndex = 0;
+            updateTotalInsights();
+            updateCounter();
+            updateProgressBar();
+        }
+
+        // Event listeners for insights
+        document.addEventListener('DOMContentLoaded', function() {
+            const nextBtn = document.getElementById("nextInsightBtn");
+            const randomBtn = document.getElementById("randomInsightBtn");
+            const langVIBtn = document.getElementById("langVI");
+            const langENBtn = document.getElementById("langEN");
+
+            if (nextBtn) nextBtn.addEventListener("click", nextInsight);
+            if (randomBtn) randomBtn.addEventListener("click", randomInsight);
+            if (langVIBtn) langVIBtn.addEventListener("click", () => switchLanguage('vi'));
+            if (langENBtn) langENBtn.addEventListener("click", () => switchLanguage('en'));
+
+            initInsights();
+
+            // Auto-play insights every 10 seconds
+            autoPlayTimer = setInterval(nextInsight, 10000);
+        });
+    </script>
+</body>
+</html>
